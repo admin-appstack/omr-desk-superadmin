@@ -1,0 +1,12 @@
+<div class="pay-stats">
+  <div class="pay-stat-card" *ngFor="let s of stats">
+    <div class="pay-stat-icon" [class]="s.theme">
+      <mat-icon>{{s.icon}}</mat-icon>
+    </div>
+    <div class="pay-stat-body">
+      <span class="pay-stat-label">{{s.label}}</span>
+      <h2 class="pay-stat-value">{{s.value}}</h2>
+    </div>
+    <div class="pay-stat-tag" [class]="s.tagClass">{{s.tag}}</div>
+  </div>
+</div>

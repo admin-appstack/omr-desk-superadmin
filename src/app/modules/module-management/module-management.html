@@ -17,18 +17,7 @@
   </div>
 
   <!-- Summary Stats -->
-  <div class="pay-stats">
-    <div class="pay-stat-card" *ngFor="let s of statCards">
-      <div class="pay-stat-icon" [class]="s.theme">
-        <mat-icon>{{s.icon}}</mat-icon>
-      </div>
-      <div class="pay-stat-body">
-        <span class="pay-stat-label">{{s.label}}</span>
-        <h2 class="pay-stat-value">{{s.value}}</h2>
-      </div>
-      <div class="pay-stat-tag" [class]="s.tagClass">{{s.tag}}</div>
-    </div>
-  </div>
+  <app-module-stats [stats]="statCards"></app-module-stats>
 
   <!-- Modules Table -->
   <mat-card class="transactions-card">
@@ -44,6 +33,8 @@
       </div>
     </div>
     <table mat-table [dataSource]="dataSource" class="full-width-table">
+      
+      <!-- Icon Column -->
       <ng-container matColumnDef="icon">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let row">
@@ -52,6 +43,8 @@
           </div>
         </td>
       </ng-container>
+
+      <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Module Name</th>
         <td mat-cell *matCellDef="let row">
@@ -61,49 +54,33 @@
           </div>
         </td>
       </ng-container>
-      <ng-container matColumnDef="free">
-        <th mat-header-cell *matHeaderCellDef>Free Plan</th>
-        <td mat-cell *matCellDef="let row">
-          <span class="tier-chip free">{{row.limits.free}}</span>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="pro">
-        <th mat-header-cell *matHeaderCellDef>Pro Plan</th>
-        <td mat-cell *matCellDef="let row">
-          <span class="tier-chip pro">{{row.limits.pro}}</span>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="premium">
-        <th mat-header-cell *matHeaderCellDef>Premium</th>
-        <td mat-cell *matCellDef="let row">
-          <span class="tier-chip premium">{{row.limits.premium}}</span>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="platinum">
-        <th mat-header-cell *matHeaderCellDef>Platinum</th>
-        <td mat-cell *matCellDef="let row">
-          <span class="tier-chip platinum">{{row.limits.platinum}}</span>
-        </td>
-      </ng-container>
+
+      <!-- Status Column -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
         <td mat-cell *matCellDef="let row">
           <span class="status-badge" [class]="row.status.toLowerCase()">{{row.status}}</span>
         </td>
       </ng-container>
+
+      <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let row">
+          <button mat-raised-button class="manage-btn" (click)="openDrawer(row)">
+            <mat-icon>layers</mat-icon> Manage Limits
+          </button>
           <button mat-icon-button [matTooltip]="row.status === 'Active' ? 'Deactivate' : 'Activate'" class="action-btn" (click)="toggleStatus(row)">
             <mat-icon>{{row.status === 'Active' ? 'visibility' : 'visibility_off'}}</mat-icon>
-          </button>
-          <button mat-icon-button matTooltip="Edit Limits" class="action-btn">
-            <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button matTooltip="More Options" class="action-btn" [matMenuTriggerFor]="modMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #modMenu="matMenu" xPosition="before">
+            <button mat-menu-item>
+              <mat-icon>edit</mat-icon>
+              <span>Edit Module</span>
+            </button>
             <button mat-menu-item>
               <mat-icon>content_copy</mat-icon>
               <span>Duplicate Module</span>
@@ -116,9 +93,18 @@
           </mat-menu>
         </td>
       </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </mat-card>
+
+  <!-- Side Drawer Component -->
+  <app-module-drawer 
+    [module]="selectedModule" 
+    [isOpen]="isDrawerOpen" 
+    (close)="closeDrawer()" 
+    (save)="saveLimits($event)">
+  </app-module-drawer>
 
 </div>

@@ -8,17 +8,41 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ModuleDrawerComponent } from './components/module-drawer/module-drawer';
+import { ModuleStatsComponent } from './components/module-stats/module-stats';
 
 @Component({
   selector: 'app-module-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule, MatTableModule, MatTooltipModule, MatMenuModule, MatDividerModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule, MatTableModule, MatTooltipModule, MatMenuModule, MatDividerModule, MatSlideToggleModule, ModuleDrawerComponent, ModuleStatsComponent],
   templateUrl: './module-management.html',
   styleUrl: './module-management.scss',
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('300ms ease-out', style({ transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'translateX(100%)' }))
+      ])
+    ]),
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0 }))
+      ])
+    ])
+  ],
 })
 export class ModuleManagement {
-  displayedColumns = ['icon', 'name', 'free', 'pro', 'premium', 'platinum', 'status', 'actions'];
-
+  displayedColumns = ['icon', 'name', 'status', 'actions'];
+  
   statCards = [
     { label: 'Total Modules',     value: '5',      icon: 'view_module', theme: 'total',   tag: 'All Modules', tagClass: 'info' },
     { label: 'Pro Features',       value: '4',      icon: 'workspace_premium', theme: 'perms', tag: 'Subscription required', tagClass: 'warn' },
@@ -33,7 +57,13 @@ export class ModuleManagement {
       description: 'Core module for scanning and processing OMR sheets.', 
       status: 'Active', 
       icon: 'qr_code_scanner',
-      limits: { free: '20 OMRs', pro: '500 OMRs', premium: '1,000 OMRs', platinum: '10,000 OMRs' }
+      unit: 'OMRs/mo',
+      limits: [
+        { plan: 'Free', limit: '20 OMRs' },
+        { plan: 'Pro', limit: '500 OMRs' },
+        { plan: 'Premium', limit: '1,000 OMRs' },
+        { plan: 'Platinum', limit: '10,000 OMRs' }
+      ]
     },
     { 
       id: 'MOD-002', 
@@ -41,7 +71,13 @@ export class ModuleManagement {
       description: 'Manage and organize question papers and banks.', 
       status: 'Active', 
       icon: 'quiz',
-      limits: { free: '5 Papers', pro: '50 Papers', premium: '200 Papers', platinum: 'Unlimited' }
+      unit: 'papers/mo',
+      limits: [
+        { plan: 'Free', limit: '5 Papers' },
+        { plan: 'Pro', limit: '50 Papers' },
+        { plan: 'Premium', limit: '200 Papers' },
+        { plan: 'Platinum', limit: 'Unlimited' }
+      ]
     },
     { 
       id: 'MOD-003', 
@@ -49,7 +85,13 @@ export class ModuleManagement {
       description: 'Manage student records and data.', 
       status: 'Active', 
       icon: 'people',
-      limits: { free: '50 Students', pro: '500 Students', premium: '2,000 Students', platinum: 'Unlimited' }
+      unit: 'students',
+      limits: [
+        { plan: 'Free', limit: '50 Students' },
+        { plan: 'Pro', limit: '500 Students' },
+        { plan: 'Premium', limit: '2,000 Students' },
+        { plan: 'Platinum', limit: 'Unlimited' }
+      ]
     },
     { 
       id: 'MOD-004', 
@@ -57,7 +99,13 @@ export class ModuleManagement {
       description: 'Detailed analytics and reports for results.', 
       status: 'Active', 
       icon: 'analytics',
-      limits: { free: 'Basic View', pro: 'Advanced', premium: 'Advanced + Export', platinum: 'Full Access' }
+      unit: 'reports',
+      limits: [
+        { plan: 'Free', limit: 'Basic View' },
+        { plan: 'Pro', limit: 'Advanced' },
+        { plan: 'Premium', limit: 'Advanced + Export' },
+        { plan: 'Platinum', limit: 'Full Access' }
+      ]
     },
     { 
       id: 'MOD-005', 
@@ -65,11 +113,18 @@ export class ModuleManagement {
       description: 'Build and manage custom website for institute.', 
       status: 'Active', 
       icon: 'web',
-      limits: { free: 'Not Available', pro: '1 Template', premium: '3 Templates', platinum: 'Unlimited' }
+      limits: [
+        { plan: 'Free', limit: 'Not Available' },
+        { plan: 'Pro', limit: '1 Template' },
+        { plan: 'Premium', limit: '3 Templates' },
+        { plan: 'Platinum', limit: 'Unlimited' }
+      ]
     },
   ];
 
   dataSource = new MatTableDataSource(this.modules);
+  selectedModule: any | null = null;
+  isDrawerOpen = false;
   searchQuery = '';
 
   constructor() {}
@@ -77,6 +132,28 @@ export class ModuleManagement {
   toggleStatus(module: any) {
     module.status = module.status === 'Active' ? 'Inactive' : 'Active';
     this.dataSource.data = [...this.modules];
+  }
+
+  openDrawer(module: any) {
+    this.selectedModule = JSON.parse(JSON.stringify(module)); // Deep copy for editing
+    this.isDrawerOpen = true;
+  }
+
+  closeDrawer() {
+    this.isDrawerOpen = false;
+    this.selectedModule = null;
+  }
+
+  saveLimits(updatedModule?: any) {
+    const target = updatedModule || this.selectedModule;
+    if (target) {
+      const index = this.modules.findIndex(m => m.id === target.id);
+      if (index !== -1) {
+        this.modules[index].limits = target.limits;
+        this.dataSource.data = [...this.modules];
+      }
+    }
+    this.closeDrawer();
   }
 
   applySearch(event: Event) {

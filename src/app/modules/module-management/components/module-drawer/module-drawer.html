@@ -1,0 +1,126 @@
+<!-- Overlay -->
+<div *ngIf="isOpen" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-all duration-300"
+  (click)="onClose()"></div>
+
+<!-- Drawer -->
+<div *ngIf="isOpen"
+  class="fixed top-0 right-0 h-screen w-full sm:w-[500px] bg-white shadow-2xl z-50 flex flex-col animate-slide-in">
+  <!-- Header -->
+  <div class="border-b border-slate-200 px-6 py-5 bg-slate-50">
+    <div class="flex items-start justify-between">
+      <div>
+        <h2 class="text-2xl font-semibold text-slate-800">
+          Manage Limits
+        </h2>
+
+        <p class="text-sm text-slate-500 mt-1">
+          {{ module?.name }}
+        </p>
+      </div>
+
+      <button mat-icon-button class="!text-slate-500 hover:!bg-slate-200" (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 overflow-y-auto px-6 py-5 bg-slate-50">
+
+    <!-- Section -->
+    <div class="mb-5">
+      <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+        Plan Limits
+      </h3>
+      <p class="text-xs text-slate-500 mt-1">
+        Configure request limits for each subscription plan.
+      </p>
+    </div>
+
+    <!-- Plans -->
+    <div class="space-y-4">
+
+      <!-- Plan Card -->
+      <div *ngFor="let plan of plans"
+        class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 p-5">
+        <!-- Top -->
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-3">
+
+            <!-- Dot -->
+            <div class="w-3 h-3 rounded-full" [ngClass]="{
+                'bg-emerald-500': plan.type === 'free',
+                'bg-blue-500': plan.type === 'pro',
+                'bg-purple-500': plan.type === 'premium',
+                'bg-amber-500': plan.type === 'platinum'
+              }"></div>
+
+            <!-- Name -->
+            <div>
+              <h4 class="font-semibold text-slate-800">
+                {{ plan.name }}
+              </h4>
+
+              <span
+                class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                Active
+              </span>
+            </div>
+          </div>
+
+          <!-- Toggle -->
+          <mat-slide-toggle color="primary" [(ngModel)]="plan.enabled">
+          </mat-slide-toggle>
+        </div>
+
+        <!-- Limit Input -->
+        <div class="mt-5">
+
+          <label class="text-sm text-slate-600 mb-2 block">
+            Monthly Request Limit
+          </label>
+
+          <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+            <mat-icon matPrefix>tune</mat-icon>
+
+            <input matInput type="number" [(ngModel)]="plan.limit" placeholder="Enter limit" />
+
+            <span matTextSuffix class="text-slate-500 text-sm">
+              {{ module?.unit || 'req/mo' }}
+            </span>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="sticky bottom-0 border-t border-slate-200 bg-white px-6 py-4">
+    <div class="flex items-center justify-between">
+
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+        <mat-icon class="!text-[18px]">
+          info
+        </mat-icon>
+
+        <span>
+          Applies to all institutes
+        </span>
+      </div>
+
+      <div class="flex gap-3">
+        <button mat-stroked-button class="!rounded-xl !px-5" (click)="onClose()">
+          Cancel
+        </button>
+
+        <button mat-raised-button color="primary" class="!rounded-xl !px-5 !shadow-md whitespace-nowrap" (click)="onSave()">
+          <span class="flex items-center gap-2">
+            <mat-icon class="!text-[18px]">save</mat-icon>
+            <span>Save Changes</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

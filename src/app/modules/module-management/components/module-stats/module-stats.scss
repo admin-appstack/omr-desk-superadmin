@@ -1,0 +1,56 @@
+/* ─── Pay Stats ─── */
+.pay-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.pay-stat-card {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.pay-stat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  mat-icon { font-size: 26px; width: 26px; height: 26px; }
+
+  &.total   { background: #ede9fe; color: #7c3aed; }
+  &.custom  { background: #fae8ff; color: #c026d3; }
+  &.perms   { background: #e0f2fe; color: #0284c7; }
+  &.warning { background: #fef08a; color: #a16207; }
+}
+
+.pay-stat-body {
+  flex: 1;
+  .pay-stat-label { font-size: 0.78rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pay-stat-value { margin: 0.25rem 0 0; font-weight: 800; color: #1e293b; font-size: 1.4rem; }
+}
+
+.pay-stat-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+
+  &.up    { background: #dcfce7; color: #15803d; }
+  &.info  { background: #e0e7ff; color: #4338ca; }
+  &.warn  { background: #ffedd5; color: #ea580c; }
+}

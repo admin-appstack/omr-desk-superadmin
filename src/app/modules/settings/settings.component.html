@@ -1,0 +1,212 @@
+<div class="module-container">
+
+  <!-- Header Hero -->
+  <div class="module-hero purple">
+    <div class="hero-content">
+      <div class="hero-icon"><mat-icon>settings</mat-icon></div>
+      <div>
+        <h1>Settings</h1>
+        <p>Configure account preferences, notifications, and system-wide defaults.</p>
+      </div>
+    </div>
+    <button mat-raised-button class="hero-btn" (click)="saved = true">
+      <mat-icon>save</mat-icon> Save Changes
+    </button>
+  </div>
+
+  <!-- Saved Banner -->
+  <div class="save-banner" *ngIf="saved">
+    <mat-icon>check_circle</mat-icon>
+    Your settings have been saved successfully.
+    <button mat-icon-button (click)="saved = false" class="close-btn"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <!-- Settings Layout: sidebar + content -->
+  <div class="settings-layout">
+
+    <!-- Sidebar Nav -->
+    <div class="settings-sidebar">
+      <button class="sidebar-tab" *ngFor="let tab of tabs; let i = index"
+              [class.active]="activeTab === i"
+              (click)="activeTab = i">
+        <div class="tab-icon-wrap" [class.active]="activeTab === i">
+          <mat-icon>{{tab.icon}}</mat-icon>
+        </div>
+        <div class="tab-labels">
+          <span class="tab-name">{{tab.label}}</span>
+          <span class="tab-sub">{{tab.sub}}</span>
+        </div>
+        <mat-icon class="tab-arrow">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <!-- Content Panel -->
+    <div class="settings-panel">
+
+      <!-- Account Profile -->
+      <div *ngIf="activeTab === 0" class="panel-content">
+        <div class="panel-header">
+          <h2>Account Profile</h2>
+          <p>Update your personal information and photo.</p>
+        </div>
+        <div class="profile-layout">
+          <div class="avatar-section">
+            <div class="large-avatar">{{profile.name.charAt(0)}}</div>
+            <button mat-stroked-button class="change-photo-btn">
+              <mat-icon>camera_alt</mat-icon> Change Photo
+            </button>
+            <span class="avatar-hint">JPG or PNG, max 2MB</span>
+          </div>
+          <div class="form-section">
+            <div class="form-group">
+              <label>Full Name</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">person</mat-icon>
+                <input [(ngModel)]="profile.name" placeholder="Full Name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Department</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">business</mat-icon>
+                <input [(ngModel)]="profile.department" placeholder="Department">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">phone</mat-icon>
+                <input [(ngModel)]="profile.phone" placeholder="Phone Number">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">email</mat-icon>
+                <input [(ngModel)]="profile.email" placeholder="Email Address">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div *ngIf="activeTab === 1" class="panel-content">
+        <div class="panel-header">
+          <h2>Notifications</h2>
+          <p>Choose how and when you receive alerts.</p>
+        </div>
+        <div class="notif-list">
+          <div class="notif-item" *ngFor="let n of notifItems">
+            <div class="notif-icon-wrap" [style.background]="n.bg">
+              <mat-icon [style.color]="n.color">{{n.icon}}</mat-icon>
+            </div>
+            <div class="notif-info">
+              <h4>{{n.label}}</h4>
+              <p>{{n.desc}}</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" [(ngModel)]="n.enabled">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div *ngIf="activeTab === 2" class="panel-content">
+        <div class="panel-header">
+          <h2>Security</h2>
+          <p>Manage your password and session settings.</p>
+        </div>
+        <div class="security-grid">
+          <div class="security-section">
+            <h3 class="section-title"><mat-icon>lock</mat-icon> Change Password</h3>
+            <div class="form-group">
+              <label>Current Password</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">lock_outline</mat-icon>
+                <input type="password" placeholder="Current password">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">lock_reset</mat-icon>
+                <input type="password" placeholder="New password">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Confirm Password</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">check_circle_outline</mat-icon>
+                <input type="password" placeholder="Confirm new password">
+              </div>
+            </div>
+            <button mat-raised-button class="update-pass-btn">
+              <mat-icon>update</mat-icon> Update Password
+            </button>
+          </div>
+          <div class="security-section">
+            <h3 class="section-title"><mat-icon>security</mat-icon> Active Sessions</h3>
+            <div class="session-item" *ngFor="let s of sessions">
+              <div class="session-icon"><mat-icon>{{s.icon}}</mat-icon></div>
+              <div class="session-info">
+                <span class="session-device">{{s.device}}</span>
+                <span class="session-loc">{{s.location}} · {{s.time}}</span>
+              </div>
+              <span class="session-badge" [class.current]="s.current">{{s.current ? 'Current' : 'Active'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div *ngIf="activeTab === 3" class="panel-content">
+        <div class="panel-header">
+          <h2>Appearance</h2>
+          <p>Customize the look and feel of your dashboard.</p>
+        </div>
+        <div class="appearance-grid">
+          <div class="appear-section">
+            <h3 class="section-title"><mat-icon>palette</mat-icon> Theme</h3>
+            <div class="theme-options">
+              <label class="theme-option" *ngFor="let t of themes">
+                <input type="radio" name="theme" [value]="t.value" [(ngModel)]="selectedTheme">
+                <div class="theme-card" [class.selected]="selectedTheme === t.value">
+                  <div class="theme-preview" [style.background]="t.preview"></div>
+                  <span>{{t.label}}</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="appear-section">
+            <h3 class="section-title"><mat-icon>language</mat-icon> Language &amp; Region</h3>
+            <div class="form-group">
+              <label>Language</label>
+              <div class="input-wrap select-wrap">
+                <mat-icon class="input-icon">translate</mat-icon>
+                <select [(ngModel)]="language">
+                  <option value="en">English</option>
+                  <option value="hi">Hindi</option>
+                  <option value="mr">Marathi</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Timezone</label>
+              <div class="input-wrap select-wrap">
+                <mat-icon class="input-icon">schedule</mat-icon>
+                <select [(ngModel)]="timezone">
+                  <option value="IST">IST – India Standard Time (UTC+5:30)</option>
+                  <option value="UTC">UTC – Coordinated Universal Time</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

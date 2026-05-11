@@ -1,0 +1,152 @@
+<div class="dashboard-wrapper" [class.collapsed]="isSidebarCollapsed()">
+
+  <!-- ───── Sidebar ───── -->
+  <aside class="sidebar">
+    <!-- Logo + Collapse Toggle -->
+    <div class="sidebar-header">
+      <div class="logo-wrapper">
+        <img src="/ORMDesk_Logo.png" alt="OMRDesk Logo" class="logo-img" />
+      </div>
+      <div class="logo-wordmark" *ngIf="!isSidebarCollapsed()">
+        <span class="wordmark-title">OMRDesk</span>
+        <span class="wordmark-sub">Superadmin Portal</span>
+      </div>
+      <button
+        class="collapse-toggle-btn"
+        (click)="toggleSidebar()"
+        [matTooltip]="isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        matTooltipPosition="right"
+      >
+        <mat-icon>{{ isSidebarCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Main Nav -->
+    <div class="nav-scroll">
+      <div class="nav-group" *ngIf="!isSidebarCollapsed()">
+        <span class="nav-group-label">WORKSPACE</span>
+      </div>
+      <mat-nav-list class="nav-list">
+        <a
+          mat-list-item
+          *ngFor="let item of mainNav"
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          [matTooltip]="isSidebarCollapsed() ? item.label : ''"
+          matTooltipPosition="right"
+        >
+          <div class="nav-item-inner">
+            <div class="nav-icon-wrap">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </div>
+            <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
+            <span class="nav-badge" *ngIf="item.badge && !isSidebarCollapsed()">{{ item.badge }}</span>
+          </div>
+        </a>
+      </mat-nav-list>
+
+      <div class="nav-group" *ngIf="!isSidebarCollapsed()">
+        <span class="nav-group-label">MANAGEMENT</span>
+      </div>
+      <div class="nav-divider" *ngIf="isSidebarCollapsed()"></div>
+      <mat-nav-list class="nav-list">
+        <a
+          mat-list-item
+          *ngFor="let item of managementNav"
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          [matTooltip]="isSidebarCollapsed() ? item.label : ''"
+          matTooltipPosition="right"
+        >
+          <div class="nav-item-inner">
+            <div class="nav-icon-wrap">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </div>
+            <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
+            <span class="nav-badge" *ngIf="item.badge && !isSidebarCollapsed()">{{ item.badge }}</span>
+          </div>
+        </a>
+      </mat-nav-list>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="sidebar-user" *ngIf="!isSidebarCollapsed()">
+        <div class="sidebar-avatar">{{ (user.name || 'A').charAt(0) }}</div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name">{{ user.name || 'Administrator' }}</span>
+          <span class="sidebar-user-role">{{ user.role || 'System Administrator' }}</span>
+        </div>
+        <button mat-icon-button class="sidebar-logout-btn" (click)="signOut()" matTooltip="Sign Out">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+      <div class="sidebar-user-collapsed" *ngIf="isSidebarCollapsed()">
+        <div class="sidebar-avatar">{{ (user.name || 'A').charAt(0) }}</div>
+        <button mat-icon-button class="sidebar-logout-btn" (click)="signOut()" matTooltip="Sign Out" matTooltipPosition="right">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ───── Main Content ───── -->
+  <main class="content-area">
+    <mat-toolbar class="top-bar">
+      <div class="toolbar-left">
+        <div class="page-breadcrumb">
+          <mat-icon class="breadcrumb-icon">apps</mat-icon>
+          <span class="page-title">Dashboard</span>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <div class="search-wrap">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search anything..." />
+          <span class="search-shortcut">⌘K</span>
+        </div>
+        <button mat-icon-button class="toolbar-icon-btn" matTooltip="Notifications">
+          <div class="notif-wrapper">
+            <mat-icon>notifications</mat-icon>
+            <span class="badge">3</span>
+          </div>
+        </button>
+        <button mat-icon-button class="toolbar-icon-btn" matTooltip="Help & Docs">
+          <mat-icon>help_outline</mat-icon>
+        </button>
+        <div class="divider-v"></div>
+        <div class="user-profile">
+          <div class="user-info">
+            <span class="user-name">{{ user.name || 'Administrator' }}</span>
+            <span class="user-role">{{ user.role || 'System Administrator' }}</span>
+          </div>
+          <button mat-icon-button [matMenuTriggerFor]="profileMenu" class="avatar-btn">
+            <div class="avatar-circle">
+              {{ (user.name || 'A').charAt(0) }}
+            </div>
+          </button>
+          <mat-menu #profileMenu="matMenu" class="profile-menu">
+            <button mat-menu-item>
+              <mat-icon>manage_accounts</mat-icon>
+              <span>My Profile</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/dashboard/settings']">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="signOut()" class="sign-out-item">
+              <mat-icon>logout</mat-icon>
+              <span>Sign Out</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </mat-toolbar>
+
+    <div class="main-viewport">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+</div>

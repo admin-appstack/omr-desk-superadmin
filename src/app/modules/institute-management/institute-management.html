@@ -1,0 +1,147 @@
+<div class="module-container">
+
+  <!-- Header Hero -->
+  <div class="module-hero indigo">
+    <div class="hero-content">
+      <div class="hero-icon"><mat-icon>business</mat-icon></div>
+      <div>
+        <h1>Institute Management</h1>
+        <p>Manage institute accounts, subscriptions, and system access.</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button mat-raised-button class="hero-btn-outline">
+        <mat-icon>group_add</mat-icon> Bulk Import
+      </button>
+      <button mat-raised-button class="hero-btn" (click)="openInstituteDialog()">
+        <mat-icon>add_business</mat-icon> Add Institute
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="pay-stats">
+    <div class="pay-stat-card" *ngFor="let s of statCards">
+      <div class="pay-stat-icon" [class]="s.theme">
+        <mat-icon>{{s.icon}}</mat-icon>
+      </div>
+      <div class="pay-stat-body">
+        <span class="pay-stat-label">{{s.label}}</span>
+        <h2 class="pay-stat-value">{{s.value}}</h2>
+      </div>
+      <div class="pay-stat-tag" [class]="s.tagClass">{{s.tag}}</div>
+    </div>
+  </div>
+
+  <!-- Institutes Table -->
+  <mat-card class="transactions-card">
+    <div class="card-header-row">
+      <div>
+        <h3 class="card-title" style="font-weight: 800; font-size: 1.4rem;">All Institutes</h3>
+      </div>
+      <div class="header-actions">
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search institutes..." (keyup)="applySearch($event)">
+        </div>
+        <button mat-stroked-button class="export-btn" [matMenuTriggerFor]="filterMenu">
+          <mat-icon>filter_list</mat-icon> Filter {{ currentFilter !== 'All' ? '(' + currentFilter + ')' : '' }}
+        </button>
+        <mat-menu #filterMenu="matMenu">
+          <button mat-menu-item (click)="applyFilter('All')">
+            <mat-icon *ngIf="currentFilter === 'All'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'All' ? 24 : 0">All Institutes</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Active')">
+            <mat-icon *ngIf="currentFilter === 'Active'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Active' ? 24 : 0">Active</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Pending')">
+            <mat-icon *ngIf="currentFilter === 'Pending'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Pending' ? 24 : 0">Pending</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Suspended')">
+            <mat-icon *ngIf="currentFilter === 'Suspended'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Suspended' ? 24 : 0">Suspended</span>
+          </button>
+        </mat-menu>
+        <button mat-stroked-button class="export-btn">
+          <mat-icon>download</mat-icon> Export
+        </button>
+      </div>
+    </div>
+    <table mat-table [dataSource]="dataSource" class="full-width-table">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Institute ID</th>
+        <td mat-cell *matCellDef="let row"><span class="txn-id">{{row.id}}</span></td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Institute</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="user-cell">
+            <div class="user-avatar">{{row.avatar}}</div>
+            <div class="user-info">
+              <strong>{{row.name}}</strong>
+              <span>{{row.email}}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="users">
+        <th mat-header-cell *matHeaderCellDef>Students</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="role-chip">{{row.users}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="subscription">
+        <th mat-header-cell *matHeaderCellDef>Subscription</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="date-chip">{{row.subscription}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="status-badge" [class]="row.status.toLowerCase()">{{row.status}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button matTooltip="Edit Institute" class="action-btn" (click)="openInstituteDialog(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="More Options" class="action-btn" [matMenuTriggerFor]="userMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #userMenu="matMenu" xPosition="before">
+            <button mat-menu-item>
+              <mat-icon>visibility</mat-icon>
+              <span>View Details</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>credit_card</mat-icon>
+              <span>Manage Subscription</span>
+            </button>
+            <button mat-menu-item *ngIf="row.status !== 'Suspended'">
+              <mat-icon>block</mat-icon>
+              <span>Suspend Institute</span>
+            </button>
+            <button mat-menu-item *ngIf="row.status === 'Suspended'">
+              <mat-icon>check_circle</mat-icon>
+              <span>Activate Institute</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item class="danger-text">
+              <mat-icon color="warn">delete</mat-icon>
+              <span style="color: #ef4444;">Delete Institute</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card>
+
+</div>

@@ -1,0 +1,132 @@
+<div class="module-container">
+
+  <!-- Header Hero -->
+  <div class="module-hero purple">
+    <div class="hero-content">
+      <div class="hero-icon"><mat-icon>admin_panel_settings</mat-icon></div>
+      <div>
+        <h1>Role Management</h1>
+        <p>Define custom roles and manage system-wide permissions.</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button mat-raised-button class="hero-btn-outline">
+        <mat-icon>security</mat-icon> Audit Logs
+      </button>
+      <button mat-raised-button class="hero-btn" (click)="openCreateRoleModal()">
+        <mat-icon>add_moderator</mat-icon> Create Role
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="pay-stats">
+    <div class="pay-stat-card" *ngFor="let s of statCards">
+      <div class="pay-stat-icon" [class]="s.theme">
+        <mat-icon>{{s.icon}}</mat-icon>
+      </div>
+      <div class="pay-stat-body">
+        <span class="pay-stat-label">{{s.label}}</span>
+        <h2 class="pay-stat-value">{{s.value}}</h2>
+      </div>
+      <div class="pay-stat-tag" [class]="s.tagClass">{{s.tag}}</div>
+    </div>
+  </div>
+
+  <!-- Roles Table -->
+  <mat-card class="transactions-card">
+    <div class="card-header-row">
+      <div>
+        <h3 class="card-title" style="font-weight: 800; font-size: 1.4rem;">System Roles</h3>
+      </div>
+      <div class="header-actions">
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search roles..." (keyup)="applySearch($event)">
+        </div>
+        <button mat-stroked-button class="export-btn" [matMenuTriggerFor]="filterMenu">
+          <mat-icon>filter_list</mat-icon> Filter {{ currentFilter !== 'All' ? '(' + currentFilter + ')' : '' }}
+        </button>
+        <mat-menu #filterMenu="matMenu">
+          <button mat-menu-item (click)="applyFilter('All')">
+            <mat-icon *ngIf="currentFilter === 'All'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'All' ? 24 : 0">All Roles</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Active')">
+            <mat-icon *ngIf="currentFilter === 'Active'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Active' ? 24 : 0">Active Roles</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Inactive')">
+            <mat-icon *ngIf="currentFilter === 'Inactive'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Inactive' ? 24 : 0">Inactive Roles</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+    <table mat-table [dataSource]="dataSource" class="full-width-table">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Role ID</th>
+        <td mat-cell *matCellDef="let row"><span class="txn-id">{{row.id}}</span></td>
+      </ng-container>
+      <ng-container matColumnDef="roleName">
+        <th mat-header-cell *matHeaderCellDef>Role Name</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="role-info">
+            <strong>{{row.name}}</strong>
+            <span>{{row.description}}</span>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="usersCount">
+        <th mat-header-cell *matHeaderCellDef>Assigned Users</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="users-count">
+            <mat-icon>people</mat-icon>
+            <span>{{row.users}} Users</span>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="permissions">
+        <th mat-header-cell *matHeaderCellDef>Permissions</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="perm-chip">{{row.perms}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="status-badge" [class]="row.status.toLowerCase()">{{row.status}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button matTooltip="Edit Role" class="action-btn" (click)="editRole(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="More Options" class="action-btn" [matMenuTriggerFor]="roleMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #roleMenu="matMenu" xPosition="before">
+            <button mat-menu-item>
+              <mat-icon>content_copy</mat-icon>
+              <span>Duplicate Role</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>block</mat-icon>
+              <span>Deactivate</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item class="danger-text">
+              <mat-icon color="warn">delete</mat-icon>
+              <span style="color: #ef4444;">Delete Role</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card>
+
+</div>

@@ -39,6 +39,7 @@ export class DashboardLayoutComponent {
   managementNav = [
     { icon: 'view_module', label: 'Module Management', route: '/dashboard/modules', badge: null },
     { icon: 'admin_panel_settings', label: 'Role Management', route: '/dashboard/roles', badge: null },
+    { icon: 'people', label: 'User Management', route: '/dashboard/users', badge: null },
     { icon: 'settings',  label: 'Settings',           route: '/dashboard/settings', badge: null },
   ];
 

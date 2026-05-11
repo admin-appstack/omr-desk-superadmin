@@ -5,6 +5,7 @@ import { InstituteManagement } from './modules/institute-management/institute-ma
 import { RoleManagement } from './modules/role-management/role-management';
 import { SettingsComponent } from './modules/settings/settings.component';
 import { ModuleManagement } from './modules/module-management/module-management';
+import { UserManagement } from './modules/user-management/user-management';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -16,6 +17,7 @@ export const routes: Routes = [
       { path: 'home', component: DashboardHomeComponent },
       { path: 'institutes', component: InstituteManagement },
       { path: 'roles', component: RoleManagement },
+      { path: 'users', component: UserManagement },
       { path: 'settings', component: SettingsComponent },
       { path: 'modules', component: ModuleManagement },
     ]

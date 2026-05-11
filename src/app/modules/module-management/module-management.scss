@@ -231,6 +231,25 @@
 
 .action-btn { color: #64748b !important; }
 
+.mat-column-icon {
+  width: 60px !important;
+  padding-right: 0 !important;
+}
+
+.mat-column-name {
+  padding-left: 0 !important;
+}
+
+.mat-column-status {
+  width: 100px !important;
+  text-align: center;
+}
+
+.mat-column-actions {
+  width: 250px !important;
+  text-align: right;
+}
+
 /* ─── Specific for Modules ────────────────────────────────────────────────── */
 .module-icon-wrap {
   width: 40px;

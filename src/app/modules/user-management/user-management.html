@@ -1,139 +1,172 @@
-<div class="bg-slate-50 min-h-screen -mt-[1.5rem] -mx-[2rem] p-8">
-  
-  <!-- Hero Section -->
-  <div class="module-hero">
+<div class="module-container">
+
+  <!-- Header Hero -->
+  <div class="module-hero purple">
     <div class="hero-content">
-      <div class="hero-icon">
-        <mat-icon>people</mat-icon>
-      </div>
+      <div class="hero-icon"><mat-icon>manage_accounts</mat-icon></div>
       <div>
         <h1>User Management</h1>
         <p>Manage system users, assign roles, and monitor account status across the platform.</p>
       </div>
     </div>
-    
     <div class="hero-actions">
-      <button mat-stroked-button class="stroked-btn">
-        <mat-icon>upload</mat-icon>
-        <span>Bulk Import</span>
+      <button mat-raised-button class="hero-btn-outline">
+        <mat-icon>upload</mat-icon> Bulk Import
       </button>
       <button mat-raised-button class="hero-btn">
-        <mat-icon>person_add</mat-icon>
-        <span>Add User</span>
+        <mat-icon>person_add</mat-icon> Add User
       </button>
     </div>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div *ngFor="let stat of statCards" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide">{{stat.label}}</p>
-          <h3 class="text-3xl font-bold text-slate-800 mt-1">{{stat.value}}</h3>
-        </div>
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center"
-             [ngClass]="{
-               'bg-blue-100 text-blue-600': stat.theme === 'total',
-               'bg-emerald-100 text-emerald-600': stat.theme === 'custom',
-               'bg-purple-100 text-purple-600': stat.theme === 'perms'
-             }">
-          <mat-icon class="!text-[24px]">{{stat.icon}}</mat-icon>
-        </div>
+  <!-- Summary Stats -->
+  <div class="pay-stats">
+    <div class="pay-stat-card" *ngFor="let s of statCards">
+      <div class="pay-stat-icon" [class]="s.theme">
+        <mat-icon>{{s.icon}}</mat-icon>
       </div>
+      <div class="pay-stat-body">
+        <span class="pay-stat-label">{{s.label}}</span>
+        <h2 class="pay-stat-value">{{s.value}}</h2>
+      </div>
+      <div class="pay-stat-tag" [class]="s.tagClass">{{s.tag}}</div>
     </div>
   </div>
 
-  <!-- Table Section (Inside a Card) -->
-  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-    
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-semibold text-slate-800">All Users</h2>
-      
-      <div class="flex items-center gap-3">
-        <!-- Search Box -->
-        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 w-64">
-          <mat-icon class="text-slate-400 !text-[18px] mr-2">search</mat-icon>
-          <input type="text" placeholder="Search users..." class="bg-transparent border-none outline-none text-sm text-slate-600 flex-1" />
+  <!-- Users Table -->
+  <mat-card class="transactions-card">
+
+    <!-- Card Header -->
+    <div class="card-header-row">
+      <div class="card-title-block">
+        <h3 class="card-title">All Users</h3>
+        <span class="record-count">{{ dataSource.data.length }} records</span>
+      </div>
+      <div class="header-actions">
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search users..." (keyup)="applySearch($event)">
         </div>
-        
-        <button mat-stroked-button class="!border-slate-200 !text-slate-600 !rounded-lg flex items-center gap-2">
-          <mat-icon class="!text-[18px]">filter_list</mat-icon>
-          <span>Filter</span>
+        <button mat-stroked-button class="export-btn" [matMenuTriggerFor]="filterMenu">
+          <mat-icon>tune</mat-icon>
+          Filter <span class="filter-label" *ngIf="currentFilter !== 'All'">· {{currentFilter}}</span>
         </button>
-        
-        <button mat-stroked-button class="!border-slate-200 !text-slate-600 !rounded-lg flex items-center gap-2">
-          <mat-icon class="!text-[18px]">download</mat-icon>
-          <span>Export</span>
+        <mat-menu #filterMenu="matMenu">
+          <button mat-menu-item (click)="applyFilter('All')">
+            <mat-icon *ngIf="currentFilter === 'All'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'All' ? 24 : 0">All Users</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Active')">
+            <mat-icon *ngIf="currentFilter === 'Active'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Active' ? 24 : 0">Active</span>
+          </button>
+          <button mat-menu-item (click)="applyFilter('Inactive')">
+            <mat-icon *ngIf="currentFilter === 'Inactive'">check</mat-icon>
+            <span [style.padding-left.px]="currentFilter !== 'Inactive' ? 24 : 0">Inactive</span>
+          </button>
+        </mat-menu>
+        <button mat-stroked-button class="export-btn">
+          <mat-icon>download</mat-icon> Export
         </button>
       </div>
     </div>
 
-    <table mat-table [dataSource]="users" class="w-full">
-      
-      <!-- Avatar Column -->
-      <ng-container matColumnDef="avatar">
-        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Avatar</th>
-        <td mat-cell *matCellDef="let user" class="px-4 py-3">
-          <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-semibold text-indigo-700">
-            {{user.avatar}}
+    <!-- Table -->
+    <table mat-table [dataSource]="dataSource" class="full-width-table">
+
+      <!-- Avatar + Name Column (merged) -->
+      <ng-container matColumnDef="user">
+        <th mat-header-cell *matHeaderCellDef class="col-header">User</th>
+        <td mat-cell *matCellDef="let u">
+          <div class="user-cell-inner">
+            <div class="user-avatar" [class]="u.avatarTheme">{{u.avatar}}</div>
+            <div class="user-meta">
+              <span class="user-name">{{u.name}}</span>
+              <span class="user-email">{{u.email}}</span>
+            </div>
           </div>
         </td>
       </ng-container>
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Name</th>
-        <td mat-cell *matCellDef="let user" class="px-4 py-3">
-          <div class="font-semibold text-slate-800">{{user.name}}</div>
-          <div class="text-sm text-slate-500">{{user.email}}</div>
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="col-header">User ID</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="txn-id">{{u.id}}</span>
         </td>
       </ng-container>
 
       <!-- Role Column -->
       <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Role</th>
-        <td mat-cell *matCellDef="let user" class="px-4 py-3">
-          <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-            {{user.role}}
+        <th mat-header-cell *matHeaderCellDef class="col-header">Role</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="role-badge" [class]="u.roleClass">
+            <mat-icon class="role-badge-icon">{{u.roleIcon}}</mat-icon>
+            {{u.role}}
           </span>
+        </td>
+      </ng-container>
+
+      <!-- Last Active Column -->
+      <ng-container matColumnDef="lastActive">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Last Active</th>
+        <td mat-cell *matCellDef="let u">
+          <div class="last-active">
+            <mat-icon>schedule</mat-icon>
+            <span>{{u.lastActive}}</span>
+          </div>
         </td>
       </ng-container>
 
       <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wide">Status</th>
-        <td mat-cell *matCellDef="let user" class="px-4 py-3">
-          <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                [ngClass]="user.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-            {{user.status}}
-          </span>
+        <th mat-header-cell *matHeaderCellDef class="col-header">Status</th>
+        <td mat-cell *matCellDef="let u">
+          <div class="status-pill" [class]="u.status.toLowerCase()">
+            <span class="status-dot"></span>
+            {{u.status}}
+          </div>
         </td>
       </ng-container>
 
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wide">Actions</th>
-        <td mat-cell *matCellDef="let user" class="px-4 py-3 text-right">
-          <div class="flex items-center justify-end gap-2">
-            <button mat-icon-button class="!text-slate-500 hover:!bg-slate-100">
-              <mat-icon>edit</mat-icon>
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let u" class="actions-cell">
+          <button mat-icon-button matTooltip="Edit User" class="action-btn edit-btn">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="More Options" class="action-btn" [matMenuTriggerFor]="userMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #userMenu="matMenu" xPosition="before">
+            <button mat-menu-item>
+              <mat-icon>lock_reset</mat-icon>
+              <span>Reset Password</span>
             </button>
-            <button mat-icon-button class="!text-slate-500 hover:!bg-slate-100" [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
+            <button mat-menu-item>
+              <mat-icon>block</mat-icon>
+              <span>Deactivate</span>
             </button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item class="!text-red-600">
-                <mat-icon class="!text-red-600">delete</mat-icon>
-                <span>Delete Account</span>
-              </button>
-            </mat-menu>
-          </div>
+            <mat-divider></mat-divider>
+            <button mat-menu-item>
+              <mat-icon color="warn">delete</mat-icon>
+              <span style="color: #ef4444;">Delete Account</span>
+            </button>
+          </mat-menu>
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-slate-50 border-b border-slate-200"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="border-b border-slate-100 hover:bg-slate-50 transition-colors"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-  </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="dataSource.data.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No users match your search or filter.</p>
+    </div>
+
+  </mat-card>
+
 </div>

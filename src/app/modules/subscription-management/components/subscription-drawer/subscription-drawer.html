@@ -1,0 +1,92 @@
+<!-- Overlay -->
+<div *ngIf="isOpen" class="drawer-overlay" [@fadeInOut] (click)="onClose()"></div>
+
+<!-- Drawer -->
+<div *ngIf="isOpen" class="side-drawer" [@slideInOut]>
+  
+  <!-- Header -->
+  <div class="drawer-header">
+    <div>
+      <h2>{{ subscription.id ? 'Edit Plan' : 'Create Plan' }}</h2>
+      <p>{{ subscription.id ? 'Modify subscription plan details.' : 'Add a new subscription plan.' }}</p>
+    </div>
+    <button mat-icon-button (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="drawer-content">
+    
+    <!-- Plan Name -->
+    <div class="form-group">
+      <label>Plan Name</label>
+      <div class="input-wrap">
+        <mat-icon class="input-icon">layers</mat-icon>
+        <input type="text" [(ngModel)]="subscription.name" placeholder="Enter plan name (e.g. Pro, Premium)" />
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="form-group">
+      <label>Price</label>
+      <div class="input-wrap">
+        <mat-icon class="input-icon">attach_money</mat-icon>
+        <input type="text" [(ngModel)]="subscription.price" placeholder="Enter price (e.g. $49)" />
+      </div>
+    </div>
+
+    <!-- Billing Cycle -->
+    <div class="form-group">
+      <label>Billing Cycle</label>
+      <div class="input-wrap">
+        <mat-icon class="input-icon">schedule</mat-icon>
+        <select [(ngModel)]="subscription.billing" class="flex-1 border-none bg-transparent outline-none text-sm text-slate-800">
+          <option value="" disabled selected>Select Billing</option>
+          <option *ngFor="let cycle of billingCycles" [value]="cycle">{{cycle}}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="form-group">
+      <label>Status</label>
+      <div class="input-wrap">
+        <mat-icon class="input-icon">info</mat-icon>
+        <select [(ngModel)]="subscription.status" class="flex-1 border-none bg-transparent outline-none text-sm text-slate-800">
+          <option value="" disabled selected>Select Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Limit -->
+    <div class="form-group">
+      <label>Request Limit</label>
+      <div class="input-wrap">
+        <mat-icon class="input-icon">tune</mat-icon>
+        <input type="text" [(ngModel)]="subscription.limit" placeholder="Enter limit (e.g. 500 req/mo)" />
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="form-group">
+      <label>Features (Comma separated)</label>
+      <div class="input-wrap">
+        <mat-icon class="input-icon">list</mat-icon>
+        <input type="text" [ngModel]="subscription.features?.join(', ')" (ngModelChange)="subscription.features = $event.split(',')" placeholder="Feature 1, Feature 2" />
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="drawer-footer">
+    <button mat-stroked-button (click)="onClose()">Cancel</button>
+    <button mat-raised-button class="save-btn" (click)="onSave()">
+      {{ subscription.id ? 'Save Changes' : 'Create' }}
+    </button>
+  </div>
+
+</div>

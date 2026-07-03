@@ -1,0 +1,159 @@
+<div class="module-container">
+
+  <!-- Header Hero -->
+  <div class="module-hero purple">
+    <div class="hero-content">
+      <div class="hero-icon"><mat-icon>card_membership</mat-icon></div>
+      <div>
+        <h1>Subscription Plans</h1>
+        <p>Manage subscription plans, pricing, and feature limits for institutes.</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button mat-raised-button class="hero-btn" (click)="openDrawer()">
+        <mat-icon>add</mat-icon> Create Plan
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="pay-stats">
+    <div class="pay-stat-card">
+      <div class="pay-stat-icon total">
+        <mat-icon>layers</mat-icon>
+      </div>
+      <div class="pay-stat-body">
+        <span class="pay-stat-label">Total Plans</span>
+        <h2 class="pay-stat-value">{{dataSource.data.length}}</h2>
+      </div>
+      <div class="pay-stat-tag info">All Tiers</div>
+    </div>
+    <div class="pay-stat-card">
+      <div class="pay-stat-icon custom">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="pay-stat-body">
+        <span class="pay-stat-label">Active Plans</span>
+        <h2 class="pay-stat-value">4</h2>
+      </div>
+      <div class="pay-stat-tag up">Live</div>
+    </div>
+    <div class="pay-stat-card">
+      <div class="pay-stat-icon perms">
+        <mat-icon>credit_card</mat-icon>
+      </div>
+      <div class="pay-stat-body">
+        <span class="pay-stat-label">Paid Plans</span>
+        <h2 class="pay-stat-value">3</h2>
+      </div>
+      <div class="pay-stat-tag info">Premium & Pro</div>
+    </div>
+  </div>
+
+  <!-- Plans Table -->
+  <mat-card class="transactions-card">
+    <div class="card-header-row">
+      <div>
+        <h3 class="card-title" style="font-weight: 800; font-size: 1.4rem;">All Plans</h3>
+      </div>
+      <div class="header-actions">
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search plans..." (keyup)="applySearch($event)">
+        </div>
+        <button mat-stroked-button class="export-btn">
+          <mat-icon>filter_list</mat-icon> Filter
+        </button>
+      </div>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" class="full-width-table">
+
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Plan ID</th>
+        <td mat-cell *matCellDef="let plan">
+          <span class="txn-id">{{plan.id}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Plan Name</th>
+        <td mat-cell *matCellDef="let plan">
+          <span class="perm-chip" [ngClass]="getPlanClass(plan.name)">{{plan.name}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Pricing</th>
+        <td mat-cell *matCellDef="let plan">
+          <div class="role-info">
+            <strong>{{plan.price}}</strong>
+            <span class="text-xs text-slate-500">{{plan.billing}}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Limit Column -->
+      <ng-container matColumnDef="limit">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Limits</th>
+        <td mat-cell *matCellDef="let plan">
+          <span class="text-sm font-medium text-slate-700">{{plan.limit}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Status</th>
+        <td mat-cell *matCellDef="let plan">
+          <span class="status-badge" [class]="getStatusClass(plan.status)">{{plan.status}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Features Column -->
+      <ng-container matColumnDef="features">
+        <th mat-header-cell *matHeaderCellDef class="col-header">Features</th>
+        <td mat-cell *matCellDef="let plan">
+          <div class="flex flex-wrap gap-1">
+            <span *ngFor="let feat of plan.features" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+              {{feat}}
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let plan" style="text-align: right;">
+          <button mat-icon-button matTooltip="Edit Plan" class="action-btn" (click)="openDrawer(plan)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Delete Plan" class="action-btn danger-text" (click)="deletePlan(plan.id)">
+            <mat-icon color="warn">delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="dataSource.data.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No plans match your search.</p>
+    </div>
+  </mat-card>
+
+  <!-- Side Drawer -->
+  <app-subscription-drawer
+    [subscription]="selectedPlan"
+    [isOpen]="isDrawerOpen"
+    (close)="closeDrawer()"
+    (save)="savePlan($event)">
+  </app-subscription-drawer>
+
+</div>

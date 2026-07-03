@@ -6,12 +6,23 @@ import { RoleManagement } from './modules/role-management/role-management';
 import { SettingsComponent } from './modules/settings/settings.component';
 import { ModuleManagement } from './modules/module-management/module-management';
 import { UserManagement } from './modules/user-management/user-management';
+import { SubscriptionManagement } from './modules/subscription-management/subscription-management';
+import { LoginComponent } from './modules/auth/login/login.component';
+import { UnauthorizedComponent } from './modules/auth/unauthorized/unauthorized.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { 
-    path: 'dashboard', 
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+  // ─── Public ──────────────────────────────────────────────────────────────
+  { path: 'login', component: LoginComponent },
+  { path: 'unauthorized', component: UnauthorizedComponent },
+
+  // ─── Protected Dashboard ─────────────────────────────────────────────────
+  {
+    path: 'dashboard',
     component: DashboardLayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: DashboardHomeComponent },
@@ -20,7 +31,9 @@ export const routes: Routes = [
       { path: 'users', component: UserManagement },
       { path: 'settings', component: SettingsComponent },
       { path: 'modules', component: ModuleManagement },
-    ]
+      { path: 'subscriptions', component: SubscriptionManagement },
+    ],
   },
-  { path: '**', redirectTo: 'dashboard' }
+
+  { path: '**', redirectTo: 'login' },
 ];

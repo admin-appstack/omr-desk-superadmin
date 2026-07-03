@@ -1,0 +1,118 @@
+<div class="login-page">
+  <!-- Animated background -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Grid overlay -->
+  <div class="grid-overlay"></div>
+
+  <div class="login-container">
+    <!-- Logo / Brand -->
+    <div class="brand-section">
+      <div class="logo-wrap">
+        <span class="logo-icon">⬡</span>
+      </div>
+      <h1 class="brand-name">OMRDesk</h1>
+      <p class="brand-tagline">Super Admin Portal</p>
+    </div>
+
+    <!-- Card -->
+    <div class="login-card">
+      <div class="card-header">
+        <h2 class="card-title">Welcome back</h2>
+        <p class="card-subtitle">Sign in to your admin account</p>
+      </div>
+
+      <!-- Error Banner -->
+      @if (errorMessage()) {
+        <div class="error-banner" role="alert">
+          <mat-icon class="error-icon">warning_amber</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label" for="email-input">Email Address</label>
+          <div class="input-wrap" [class.error]="emailControl.invalid && emailControl.touched">
+            <mat-icon class="input-icon">alternate_email</mat-icon>
+            <input
+              id="email-input"
+              type="email"
+              formControlName="email"
+              class="field-input"
+              placeholder="admin@omrdesk.com"
+              autocomplete="email"
+            />
+          </div>
+          @if (emailControl.invalid && emailControl.touched) {
+            <span class="field-error">
+              @if (emailControl.errors?.['required']) { Email is required. }
+              @else if (emailControl.errors?.['email']) { Please enter a valid email. }
+            </span>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label class="field-label" for="password-input">Password</label>
+          <div class="input-wrap" [class.error]="passwordControl.invalid && passwordControl.touched">
+            <mat-icon class="input-icon">lock_outline</mat-icon>
+            <input
+              id="password-input"
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+              class="field-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="toggle-btn"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+            >
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          @if (passwordControl.invalid && passwordControl.touched) {
+            <span class="field-error">
+              @if (passwordControl.errors?.['required']) { Password is required. }
+              @else if (passwordControl.errors?.['minlength']) { Minimum 6 characters. }
+            </span>
+          }
+        </div>
+
+        <!-- Submit -->
+        <button
+          id="login-submit-btn"
+          type="submit"
+          class="submit-btn"
+          [disabled]="isLoading()"
+        >
+          @if (isLoading()) {
+            <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
+            <span>Authenticating…</span>
+          } @else {
+            <mat-icon>login</mat-icon>
+            <span>Sign In</span>
+          }
+        </button>
+      </form>
+
+      <!-- Footer hint -->
+      <p class="login-hint">
+        <mat-icon class="hint-icon">shield</mat-icon>
+        Restricted to Super Administrators only
+      </p>
+    </div>
+
+    <p class="copyright">© {{ currentYear }} OMRDesk. All rights reserved.</p>
+  </div>
+</div>

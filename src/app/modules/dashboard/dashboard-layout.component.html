@@ -72,17 +72,17 @@
     <!-- Sidebar Footer -->
     <div class="sidebar-footer">
       <div class="sidebar-user" *ngIf="!isSidebarCollapsed()">
-        <div class="sidebar-avatar">{{ (user.name || 'A').charAt(0) }}</div>
+        <div class="sidebar-avatar">{{ displayName().charAt(0) }}</div>
         <div class="sidebar-user-info">
-          <span class="sidebar-user-name">{{ user.name || 'Administrator' }}</span>
-          <span class="sidebar-user-role">{{ user.role || 'System Administrator' }}</span>
+          <span class="sidebar-user-name">{{ displayName() }}</span>
+          <span class="sidebar-user-role">{{ displayRole() }}</span>
         </div>
         <button mat-icon-button class="sidebar-logout-btn" (click)="signOut()" matTooltip="Sign Out">
           <mat-icon>logout</mat-icon>
         </button>
       </div>
       <div class="sidebar-user-collapsed" *ngIf="isSidebarCollapsed()">
-        <div class="sidebar-avatar">{{ (user.name || 'A').charAt(0) }}</div>
+        <div class="sidebar-avatar">{{ displayName().charAt(0) }}</div>
         <button mat-icon-button class="sidebar-logout-btn" (click)="signOut()" matTooltip="Sign Out" matTooltipPosition="right">
           <mat-icon>logout</mat-icon>
         </button>
@@ -117,12 +117,12 @@
         <div class="divider-v"></div>
         <div class="user-profile">
           <div class="user-info">
-            <span class="user-name">{{ user.name || 'Administrator' }}</span>
-            <span class="user-role">{{ user.role || 'System Administrator' }}</span>
+            <span class="user-name">{{ displayName() }}</span>
+            <span class="user-role">{{ displayRole() }}</span>
           </div>
           <button mat-icon-button [matMenuTriggerFor]="profileMenu" class="avatar-btn">
             <div class="avatar-circle">
-              {{ (user.name || 'A').charAt(0) }}
+              {{ displayName().charAt(0) }}
             </div>
           </button>
           <mat-menu #profileMenu="matMenu" class="profile-menu">

@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Website Settings</h2>
+<div mat-dialog-content>
+  <div *ngIf="isLoading" style="display: flex; justify-content: center; padding: 20px;">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  
+  <div *ngIf="!isLoading" style="display: flex; flex-direction: column; gap: 16px; padding: 10px 0;">
+    <p>Configure advanced website settings for <strong>{{instituteName}}</strong>.</p>
+    
+    <div style="padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #f8fafc;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h4 style="margin: 0; font-weight: 600; color: #1e293b;">Publish to Cloudflare R2</h4>
+        <mat-slide-toggle 
+          [checked]="publishToCloudflareR2" 
+          (change)="onToggleChange($event)"
+          color="primary">
+        </mat-slide-toggle>
+      </div>
+      <p style="margin: 0; font-size: 0.9rem; color: #64748b;">
+        If enabled, the institute website changes will be automatically built and uploaded to Cloudflare R2 buckets to be served as static files. Turn this OFF only if you are handling dynamic deployment via a custom Cloudflare Worker.
+      </p>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="isSaving">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="isLoading || isSaving">
+    <span *ngIf="!isSaving">Save Changes</span>
+    <mat-spinner *ngIf="isSaving" diameter="20" color="accent" style="display: inline-block; margin-left: 8px;"></mat-spinner>
+  </button>
+</div>

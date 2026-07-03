@@ -5,9 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { WebsiteSettingsDialog } from './website-settings-dialog/website-settings-dialog.component';
 
 @Component({
   selector: 'app-institute-management',
@@ -38,10 +39,18 @@ export class InstituteManagement {
   currentFilter = 'All';
   searchQuery = '';
 
-  constructor() {}
+  constructor(private dialog: MatDialog) {}
 
   openInstituteDialog(institute?: any) {
     console.log('Open dialog for', institute);
+  }
+
+  openWebsiteSettingsDialog(institute: any) {
+    this.dialog.open(WebsiteSettingsDialog, {
+      width: '500px',
+      data: institute,
+      disableClose: true
+    });
   }
 
   applySearch(event: Event) {
